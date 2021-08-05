@@ -12,7 +12,10 @@ const getState = ({ getStore, getActions, setStore }) => {
 					background: "white",
 					initial: "white"
 				}
-			]
+			],
+			urlApi: "https://www.swapi.tech/api",
+			character: null,
+			error: null
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -37,6 +40,24 @@ const getState = ({ getStore, getActions, setStore }) => {
 
 				//reset the global store
 				setStore({ demo: demo });
+			},
+			getCharacter: id => {
+				const store = getStore();
+
+				fetch(`${store.urlApi}/people/${id}`, {
+					method: "GET",
+					headers: {
+						"Content-type": "application/json"
+					}
+				})
+					.then(response => {
+						if (response.ok) {
+							return response.json();
+						} else {
+							setStore({ error: "No se pudo obtener el personaje" });
+						}
+					})
+					.then(data => !!data && setStore({ character: data.result.properties }));
 			}
 		}
 	};
