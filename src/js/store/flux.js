@@ -1,21 +1,11 @@
 const getState = ({ getStore, getActions, setStore }) => {
 	return {
 		store: {
-			demo: [
-				{
-					title: "FIRST",
-					background: "white",
-					initial: "white"
-				},
-				{
-					title: "SECOND",
-					background: "white",
-					initial: "white"
-				}
-			],
 			urlApi: "https://www.swapi.tech/api",
 			character: null,
-			error: null
+			error: null,
+			apiPokemon: "https://pokeapi.co/api/v2",
+			pokemons: []
 		},
 		actions: {
 			// Use getActions to call a function within a fuction
@@ -58,6 +48,17 @@ const getState = ({ getStore, getActions, setStore }) => {
 						}
 					})
 					.then(data => !!data && setStore({ character: data.result.properties }));
+			},
+			getPokemons: () => {
+				const store = getStore();
+				fetch(`${store.apiPokemon}/pokemon`, {
+					method: "GET",
+					headers: {
+						"Content-Type": "application/json"
+					}
+				})
+					.then(response => response.json())
+					.then(data => setStore({ pokemons: data.results }));
 			}
 		}
 	};
